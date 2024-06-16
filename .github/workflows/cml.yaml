@@ -1,7 +1,5 @@
 name: CML & DVC
-
 on: [push]
-
 jobs:
   train-and-report:
     runs-on: ubuntu-latest
@@ -10,17 +8,20 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install DVC and gdrive dependencies
-        run: |
-          pip install dvc[gdrive]
-      - name: Configure DVC remote for Google Drive
+      - uses: iterative/setup-cml@v1
+      - uses: iterative/setup-dvc@v1
+      - name: Configure Google Drive
         env:
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
         run: |
           echo "${GDRIVE_CREDENTIALS_DATA}" > gdrive_credentials.json
-          dvc remote add -d myremote gdrive://1N6sZXtLBIzIpRTWPHRiq4CdA7_ymRPgv  # ID de la carpeta
+          dvc remote add -d myremote gdrive://1N6sZXtLBIzIpRTWPHRiq4CdA7_ymRPgv
+          dvc remote modify myremote gdrive_use_service_account true
           dvc remote modify myremote gdrive_service_account_json_file_path gdrive_credentials.json
       - name: Train model
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           pip install -r requirements.txt  # Install dependencies
           dvc pull data --run-cache        # Pull data & run-cache from Google Drive
@@ -33,7 +34,6 @@ jobs:
           git fetch --depth=1 origin main:main
 
           dvc metrics diff main --show-md >> report.md
-
           echo "## Plots" >> report.md
           echo "### Class confusions" >> report.md
           dvc plots diff \
@@ -60,3 +60,4 @@ jobs:
           echo '![](./plot-loss.png "Training Loss")' >> report.md
 
           cml comment create report.md
+
