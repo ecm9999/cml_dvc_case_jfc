@@ -10,10 +10,9 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install DVC and pydrive2
+      - name: Install DVC and gdrive dependencies
         run: |
-          pip install dvc[gs]
-          pip install pydrive2
+          pip install dvc[gdrive]
       - name: Configure DVC remote for Google Drive
         env:
           GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_FILE_PATH }}
@@ -23,8 +22,6 @@ jobs:
           dvc remote modify myremote gdrive_use_service_account true
           dvc remote modify myremote gdrive_service_account_json_file_path gdrive_service_account.json
       - name: Train model
-        env:
-          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_FILE_PATH }}
         run: |
           pip install -r requirements.txt  # Install dependencies
           dvc pull data --run-cache        # Pull data & run-cache from Google Drive
@@ -64,4 +61,5 @@ jobs:
           echo '![](./plot-loss.png "Training Loss")' >> report.md
 
           cml comment create report.md
+
 
