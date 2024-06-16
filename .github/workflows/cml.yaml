@@ -15,12 +15,11 @@ jobs:
           pip install dvc[gdrive]
       - name: Configure DVC remote for Google Drive
         env:
-          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_FILE_PATH }}
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
         run: |
-          echo "${GDRIVE_SERVICE_ACCOUNT_JSON}" > gdrive_service_account.json
+          echo "${GDRIVE_CREDENTIALS_DATA}" > gdrive_credentials.json
           dvc remote add -d myremote gdrive://1kloaCZQgL-YlOmNMeqxlUdsqwgBaXor-
-          dvc remote modify myremote gdrive_use_service_account true
-          dvc remote modify myremote gdrive_service_account_json_file_path gdrive_service_account.json
+          dvc remote modify myremote gdrive_service_account_json_file_path gdrive_credentials.json
       - name: Train model
         run: |
           pip install -r requirements.txt  # Install dependencies
