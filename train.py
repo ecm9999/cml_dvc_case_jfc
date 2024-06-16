@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-# Read in data
+# Read in data 
 X_train = np.genfromtxt("data/train_features.csv")
 y_train = np.genfromtxt("data/train_labels.csv")
 X_test = np.genfromtxt("data/test_features.csv")
