@@ -1,2 +1,12 @@
-dvc remote add -d myremote gdrive://1kloaCZQgL-YlOmNMeqxlUdsqwgBaXor-
-dvc remote modify myremote gdrive_use_service_account false
+stages:
+  mystage:
+    cmd: python train.py
+    deps:
+    - data
+    - train.py
+    metrics:
+    - metrics.json:
+        cache: false
+    plots:
+    - loss.csv:
+        cache: false
