@@ -1,0 +1,2 @@
+dvc remote add -d myremote gdrive://1kloaCZQgL-YlOmNMeqxlUdsqwgBaXor-
+dvc remote modify myremote gdrive_use_service_account false
